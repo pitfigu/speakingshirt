@@ -1,0 +1,3 @@
+<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
+
+This project is a Next.js (React, TypeScript) web app for an art installation. The main feature is a poetic, terminal-inspired, mobile-first chat interface that connects to the OpenAI API with a custom system prompt. Prioritize accessibility, mobile usability, and a minimal, glitchy, monospaced aesthetic. No emoji or HTML in chat bubbles. Use the system prompt and style described in the project brief for all AI interactions.

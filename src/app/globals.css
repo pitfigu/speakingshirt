@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000;
+  --foreground: #ededed;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono), monospace;
+  min-height: 100vh;
+}
+
+button, input, textarea {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Accessibility: focus ring */
+:focus {
+  outline: 2px solid #00ff99;
+  outline-offset: 2px;
+}

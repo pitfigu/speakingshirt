@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 
 const TERMINAL_HEADER = [
   "[connection established]",
-  ">> object: shirt_01",
+  ">> object: version_2.0",
   ">> status: deconstructed",
 ];
 
@@ -79,41 +79,29 @@ export default function Home() {
       }, 400);
       return () => clearInterval(interval);
     }, [loading]);
-    return <span aria-live="polite">shirt_01 is thinking{dots}</span>;
+    return <span aria-live="polite">version_2.0 is thinking{dots}</span>;
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black font-mono">
-      <main className="flex min-h-screen w-full max-w-md flex-col items-center justify-center px-0 py-0 bg-black text-green-400 shadow-xl border-2 border-green-700 rounded-lg terminal-outer">
+      <main className="flex min-h-screen w-full max-w-md flex-col items-center justify-center px-0 py-0 bg-black text-orange-400 shadow-xl border-2 border-green-700 rounded-lg terminal-outer">
         {/* Terminal Bezel/Title Bar */}
         <div className="w-full flex items-center justify-between bg-green-900/80 px-3 py-2 rounded-t-lg border-b border-green-700 terminal-bar">
-          <span className="text-xs font-bold tracking-widest text-green-200">SPEAKINGSHIRT v1.0</span>
-          <span className="text-xs text-green-400">[QR-INTERFACE]</span>
+          <span className="text-xs font-bold tracking-widest text-green-200">VERSION_2.0 v1.0</span>
+          <span className="text-xs text-green-400">[author:Melika_Nikoukar]</span>
         </div>
         {/* Terminal Screen */}
         <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400 }}>
-          {/* Artwork */}
-          <div className="mb-4 w-full flex justify-center">
-            <Image
-              src={ARTWORK_SRC}
-              alt="SpeakingShirt artwork"
-              width={80}
-              height={80}
-              className="rounded border border-green-700 shadow-glitch"
-              priority
-              draggable={false}
-            />
-          </div>
           {/* Terminal Header */}
           <div className="w-full text-left text-xs tracking-tight mb-2 select-none" aria-label="Terminal header">
             {TERMINAL_HEADER.map((line) => (
-              <div className="text-green-400" key={line}>{line}</div>
+              <div className="text-orange-400" key={line}>{line}</div>
             ))}
           </div>
           {/* Chat Window */}
           <div
             ref={chatRef}
-            className="w-full flex-1 overflow-y-auto bg-black border border-green-800 rounded p-2 mb-2 h-60 focus:outline-none terminal-chat"
+            className="w-full flex-1 overflow-y-auto bg-black border border-orange-800 rounded p-2 mb-2 h-60 focus:outline-none terminal-chat"
             tabIndex={0}
             aria-label="Chat history"
             role="log"
@@ -124,16 +112,16 @@ export default function Home() {
                 key={i}
                 className={`mb-3 whitespace-pre-line ${
                   msg.role === "assistant"
-                    ? "text-green-300 terminal-line"
-                    : "text-green-500 text-right terminal-line-user"
+                    ? "text-orange-400 terminal-line"
+                    : "text-green-400 text-right terminal-line-user"
                 }`}
                 aria-live={i === messages.length - 1 ? "polite" : undefined}
               >
-                <span className="terminal-prompt">{msg.role === "assistant" ? "$" : ">"} </span>{msg.content}
+                <span className="terminal-prompt">{msg.role === "assistant" ? ">" : ">"} </span>{msg.content}
               </div>
             ))}
             {loading && (
-              <div className="text-green-700 italic terminal-line"><LoadingDots /></div>
+              <div className="text-orange-700 italic terminal-line"><LoadingDots /></div>
             )}
           </div>
           {/* Error Message */}
@@ -142,10 +130,10 @@ export default function Home() {
           )}
           {/* Input */}
           <form onSubmit={sendMessage} className="w-full flex gap-2 terminal-input-row" aria-label="Send a message">
-            <span className="terminal-prompt text-green-400 pt-2">&gt;</span>
+            <span className="terminal-prompt text-orange-400 pt-2">&gt;</span>
             <input
               ref={inputRef}
-              className="flex-1 rounded bg-black border-none px-2 py-2 text-green-300 focus:outline-none focus:ring-2 focus:ring-green-400 font-mono terminal-input"
+              className="flex-1 rounded bg-black border-none px-2 py-2 text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono terminal-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message…"
@@ -157,7 +145,7 @@ export default function Home() {
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-green-700 text-black font-mono font-bold shadow-glitch focus:outline-none focus:ring-2 focus:ring-green-400 transition-all glitch-btn disabled:opacity-50"
+              className="px-4 py-2 rounded bg-orange-700 text-black font-mono font-bold shadow-glitch focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all glitch-btn disabled:opacity-50"
               disabled={loading || !input.trim()}
               aria-disabled={loading || !input.trim()}
             >
@@ -173,10 +161,13 @@ export default function Home() {
       <style jsx global>{`
         .terminal-outer {
           box-shadow: 0 0 24px #0f0a, 0 0 0 2px #1a3a1a;
+          border-color: #16ff16 !important;
         }
         .terminal-bar {
           border-top-left-radius: 0.5rem;
           border-top-right-radius: 0.5rem;
+          background: #064d06cc;
+          border-bottom: 1px solid #16ff16;
         }
         .terminal-screen {
           font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
@@ -196,7 +187,7 @@ export default function Home() {
         }
         .terminal-prompt {
           font-weight: bold;
-          color: #00ff99;
+          color: #ff9900;
           margin-right: 0.25rem;
         }
         .terminal-input-row {
@@ -204,11 +195,11 @@ export default function Home() {
         }
         .terminal-input {
           background: #0a0a0a;
-          color: #7fff7f;
+          color: #ff9900;
           border: none;
         }
         .glitch-scanlines {
-          background: repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(0,255,128,0.08) 7px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(255,153,0,0.08) 7px);
         }
         .animate-scanlines {
           animation: scanline-move 1.2s linear infinite;
@@ -218,7 +209,7 @@ export default function Home() {
           100% { background-position-y: 7px; }
         }
         .glitch-btn {
-          box-shadow: 0 0 0 1px #00ff99, 0 0 8px #00ff9933;
+          box-shadow: 0 0 0 1px #ff9900, 0 0 8px #ff990033;
         }
       `}</style>
     </div>

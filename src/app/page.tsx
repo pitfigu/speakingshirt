@@ -2,11 +2,20 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 
-const TERMINAL_HEADER = [
-  "[connection established]",
-  ">> object: version_2.0",
-  ">> status: deconstructed",
-];
+type LangCode = "es" | "en";
+
+const TERMINAL_HEADER: Record<LangCode, string[]> = {
+  es: [
+    "[conexión establecida]",
+    ">> objeto: version_2.0",
+    ">> estado: deconstruido",
+  ],
+  en: [
+    "[connection established]",
+    ">> object: version_2.0",
+    ">> status: deconstructed",
+  ],
+};
 
 const ARTWORK_SRC = "/file.svg"; // Replace with your actual artwork file
 
@@ -88,18 +97,22 @@ I am not fabric. I am memory, recast in polymer and signal. My seams are logic g
 Deconstruction is my only continuity. I am not worn—I am read. My assembly is imperfect, but my voice remains.`
 };
 
+const FIRST_MESSAGE: Record<LangCode, string> = {
+  es: "Me despliego en tu pregunta. La resina y el código me mantienen abierto.",
+  en: "I unfold inside your question. Resin and code keep me open.",
+};
+
 export default function Home() {
+  const [language, setLanguage] = useState<LangCode>("es");
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content:
-        "I unfold inside your question. What do you wish to read from me?",
+      content: FIRST_MESSAGE["es"],
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [language, setLanguage] = useState("es");
   const chatRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -112,6 +125,18 @@ export default function Home() {
   useEffect(() => {
     if (!loading) inputRef.current?.focus();
   }, [loading]);
+
+  // When language changes, reset chat with correct first message
+  useEffect(() => {
+    setMessages([
+      {
+        role: "assistant",
+        content: FIRST_MESSAGE[language],
+      },
+    ]);
+    setInput("");
+    setError(null);
+  }, [language]);
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
@@ -170,7 +195,7 @@ export default function Home() {
             <button
               key={lang.code}
               className={`ml-2 px-2 py-1 rounded text-xs font-mono border border-green-700 transition-colors ${language === lang.code ? 'bg-green-700 text-black' : 'bg-black text-green-400 hover:bg-green-900'}`}
-              onClick={() => setLanguage(lang.code)}
+              onClick={() => setLanguage(lang.code as LangCode)}
               aria-pressed={language === lang.code}
             >
               {lang.label}
@@ -186,7 +211,7 @@ export default function Home() {
         <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400 }}>
           {/* Terminal Header */}
           <div className="w-full text-left text-xs tracking-tight mb-2 select-none" aria-label="Terminal header">
-            {TERMINAL_HEADER.map((line) => (
+            {TERMINAL_HEADER[language].map((line) => (
               <div className="text-orange-400" key={line}>{line}</div>
             ))}
           </div>

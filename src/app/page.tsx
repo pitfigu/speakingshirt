@@ -1,6 +1,7 @@
 
 "use client";
 import Image from "next/image";
+import FaultyTerminal from "../FaultyTerminal";
 import { useState, useRef, useEffect } from "react";
 
 export default function HomePage() {

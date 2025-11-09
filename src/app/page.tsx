@@ -188,7 +188,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black font-mono">
-      <main className="flex min-h-screen w-full max-w-md flex-col items-center justify-center px-0 py-0 bg-black text-orange-400 shadow-xl border-2 border-green-700 rounded-lg terminal-outer">
+      <main className="flex min-h-screen w-full max-w-md flex-col items-center justify-center px-0 py-0 bg-black text-orange-400 shadow-xl border-2 border-green-700 rounded-lg terminal-outer relative">
         {/* Language Switcher */}
         <div className="w-full flex justify-end px-3 pt-2 pb-1">
           {LANGUAGES.map((lang) => (
@@ -208,10 +208,10 @@ export default function Home() {
           <span className="text-xs text-green-400">[author:Melika_Nikoukar]</span>
         </div>
         {/* Terminal Screen */}
-        <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400, position: 'relative' }}>
+        <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400, position: 'relative', marginBottom: '4.5rem' }}>
           {/* Terminal Header: only above first message */}
           <div className="w-full text-left text-xs tracking-tight mb-2 select-none" aria-label="Terminal header">
-            {messages.length === 1 && TERMINAL_HEADER[language].map((line) => (
+            {TERMINAL_HEADER[language].map((line) => (
               <div className="text-orange-400" key={line}>{line}</div>
             ))}
           </div>
@@ -224,19 +224,30 @@ export default function Home() {
             role="log"
             style={{ fontSize: '1rem', lineHeight: '1.4', fontFamily: 'Fira Mono, Menlo, monospace' }}
           >
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`mb-3 whitespace-pre-line ${
-                  msg.role === "assistant"
-                    ? "text-orange-400 terminal-line"
-                    : "text-green-400 text-right terminal-line-user"
-                }`}
-                aria-live={i === messages.length - 1 ? "polite" : undefined}
-              >
-                <span className="terminal-prompt">{msg.role === "assistant" ? ">" : ">"} </span>{msg.content}
-              </div>
-            ))}
+            {messages.map((msg, i) => {
+              let content = msg.content;
+              // Remove terminal header from all assistant messages except the first
+              if (msg.role === "assistant" && i > 0) {
+                TERMINAL_HEADER[language].forEach((line) => {
+                  if (content.startsWith(line)) {
+                    content = content.replace(line, "").trimStart();
+                  }
+                });
+              }
+              return (
+                <div
+                  key={i}
+                  className={`mb-3 whitespace-pre-line ${
+                    msg.role === "assistant"
+                      ? "text-orange-400 terminal-line"
+                      : "text-green-400 text-right terminal-line-user"
+                  }`}
+                  aria-live={i === messages.length - 1 ? "polite" : undefined}
+                >
+                  <span className="terminal-prompt">{msg.role === "assistant" ? ">" : ">"} </span>{content}
+                </div>
+              );
+            })}
             {loading && (
               <div className="text-orange-700 italic terminal-line"><LoadingDots /></div>
             )}
@@ -245,31 +256,31 @@ export default function Home() {
           {error && (
             <div className="w-full mb-2 text-red-400 text-xs" role="alert">{error}</div>
           )}
-          {/* Input: sticky at bottom for mobile usability */}
-          <form onSubmit={sendMessage} className="w-full flex gap-2 terminal-input-row" aria-label="Send a message" style={{position:'sticky',bottom:0,zIndex:10,background:'#0a0a0a',paddingTop:'0.5rem'}}>
-            <span className="terminal-prompt text-orange-400 pt-2">&gt;</span>
-            <input
-              ref={inputRef}
-              className="flex-1 rounded bg-black border-none px-2 py-2 text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono terminal-input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message…"
-              autoComplete="off"
-              aria-label="Type your message"
-              disabled={loading}
-              maxLength={300}
-              style={{ fontSize: '1rem', fontFamily: 'Fira Mono, Menlo, monospace' }}
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-orange-700 text-black font-mono font-bold shadow-glitch focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all glitch-btn disabled:opacity-50"
-              disabled={loading || !input.trim()}
-              aria-disabled={loading || !input.trim()}
-            >
-              Send
-            </button>
-          </form>
         </div>
+        {/* Input: fixed at bottom of viewport for true mobile usability, outside scrollable chat */}
+        <form onSubmit={sendMessage} className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md flex gap-2 terminal-input-row px-3 py-2 bg-black z-50" aria-label="Send a message">
+          <span className="terminal-prompt text-orange-400 pt-2">&gt;</span>
+          <input
+            ref={inputRef}
+            className="flex-1 rounded bg-black border-none px-2 py-2 text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono terminal-input"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message…"
+            autoComplete="off"
+            aria-label="Type your message"
+            disabled={loading}
+            maxLength={300}
+            style={{ fontSize: '1rem', fontFamily: 'Fira Mono, Menlo, monospace' }}
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 rounded bg-orange-700 text-black font-mono font-bold shadow-glitch focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all glitch-btn disabled:opacity-50"
+            disabled={loading || !input.trim()}
+            aria-disabled={loading || !input.trim()}
+          >
+            Send
+          </button>
+        </form>
         {/* Scanline/Glitch Overlay */}
         <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-30">
           <div className="glitch-scanlines w-full h-full animate-scanlines"></div>

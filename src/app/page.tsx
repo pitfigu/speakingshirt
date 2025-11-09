@@ -208,10 +208,10 @@ export default function Home() {
           <span className="text-xs text-green-400">[author:Melika_Nikoukar]</span>
         </div>
         {/* Terminal Screen */}
-        <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400 }}>
-          {/* Terminal Header */}
+        <div className="w-full flex flex-col flex-1 bg-black px-3 py-4 terminal-screen overflow-y-auto" style={{ minHeight: 400, position: 'relative' }}>
+          {/* Terminal Header: only above first message */}
           <div className="w-full text-left text-xs tracking-tight mb-2 select-none" aria-label="Terminal header">
-            {TERMINAL_HEADER[language].map((line) => (
+            {messages.length === 1 && TERMINAL_HEADER[language].map((line) => (
               <div className="text-orange-400" key={line}>{line}</div>
             ))}
           </div>
@@ -245,8 +245,8 @@ export default function Home() {
           {error && (
             <div className="w-full mb-2 text-red-400 text-xs" role="alert">{error}</div>
           )}
-          {/* Input */}
-          <form onSubmit={sendMessage} className="w-full flex gap-2 terminal-input-row" aria-label="Send a message">
+          {/* Input: sticky at bottom for mobile usability */}
+          <form onSubmit={sendMessage} className="w-full flex gap-2 terminal-input-row" aria-label="Send a message" style={{position:'sticky',bottom:0,zIndex:10,background:'#0a0a0a',paddingTop:'0.5rem'}}>
             <span className="terminal-prompt text-orange-400 pt-2">&gt;</span>
             <input
               ref={inputRef}

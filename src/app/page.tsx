@@ -179,39 +179,35 @@ Yes, a shirt that talks. Weird, right?`,
   }
 
   return (
-    <div style={{ position: 'relative', width: '100vw', minHeight: '100vh', overflow: 'hidden' }}>
+    <div className="relative min-h-screen w-full overflow-hidden font-mono text-orange-400">
       {/* Animated Terminal Background */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-      }}>
+      <div className="pointer-events-none absolute inset-0 -z-20">
         <FaultyTerminal
-          scale={1.5}
+          className="h-full w-full"
+          scale={1.6}
           gridMul={[2, 1]}
-          digitSize={1.2}
+          digitSize={1.1}
           timeScale={1}
           pause={false}
-          scanlineIntensity={1}
+          scanlineIntensity={1.2}
           glitchAmount={1}
           flickerAmount={1}
           noiseAmp={1}
           chromaticAberration={0}
           dither={0}
           curvature={0}
-          tint="#ffffff"
+          tint="#27ff7a"
           mouseReact={true}
-          mouseStrength={0.5}
+          mouseStrength={0.4}
           pageLoadAnimation={false}
-          brightness={1}
+          brightness={0.9}
         />
       </div>
+      {/* Soft Overlay to Aid Readability */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/55 to-black/85 backdrop-blur-sm" aria-hidden="true"></div>
       {/* Foreground Chat UI */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <main className="flex min-h-screen w-full max-w-md flex-col items-center justify-center px-0 py-0 bg-black text-orange-400 shadow-xl border-2 border-green-700 rounded-lg terminal-outer relative">
+      <div className="relative flex min-h-screen w-full items-center justify-center px-3 py-10">
+        <main className="relative flex w-full max-w-md flex-col items-center justify-center rounded-lg border-2 border-green-700 bg-black/60 shadow-xl backdrop-blur-md terminal-outer">
           {/* Language Switcher */}
           <div className="w-full flex justify-end px-3 pt-2 pb-1">
             {LANGUAGES.map((lang) => (
@@ -281,11 +277,15 @@ Yes, a shirt that talks. Weird, right?`,
             )}
           </div>
           {/* Input: fixed at bottom of viewport for true mobile usability, outside scrollable chat */}
-          <form onSubmit={sendMessage} className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md flex gap-2 terminal-input-row px-3 py-2 bg-black z-50" aria-label="Send a message">
+          <form
+            onSubmit={sendMessage}
+            className="fixed bottom-4 left-1/2 z-50 w-[min(100%-1.5rem,28rem)] -translate-x-1/2 flex gap-2 terminal-input-row px-3 py-2 shadow-lg"
+            aria-label="Send a message"
+          >
             <span className="terminal-prompt text-orange-400 pt-2">&gt;</span>
             <input
               ref={inputRef}
-              className="flex-1 rounded bg-black border-none px-2 py-2 text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono terminal-input"
+              className="flex-1 rounded border-none px-2 py-2 text-orange-200 placeholder-orange-200/60 focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono terminal-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message…"
@@ -311,30 +311,31 @@ Yes, a shirt that talks. Weird, right?`,
         </main>
         <style jsx global>{`
           .terminal-outer {
-            box-shadow: 0 0 24px #0f0a, 0 0 0 2px #1a3a1a;
+            box-shadow: 0 0 24px rgba(0, 255, 140, 0.25), 0 0 0 2px rgba(26, 58, 26, 0.8);
             border-color: #16ff16 !important;
           }
           .terminal-bar {
             border-top-left-radius: 0.5rem;
             border-top-right-radius: 0.5rem;
-            background: #064d06cc;
-            border-bottom: 1px solid #16ff16;
+            background: rgba(6, 77, 6, 0.85);
+            border-bottom: 1px solid rgba(22, 255, 22, 0.6);
           }
           .terminal-screen {
             font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
-            background: #0a0a0a;
+            background: rgba(0, 0, 0, 0.35);
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
+            backdrop-filter: blur(4px);
           }
           .terminal-chat {
-            background: #0a0a0a;
-            border: 1px solid #1a3a1a;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(22, 255, 22, 0.25);
           }
           .terminal-line {
             padding-left: 0.5rem;
           }
           .terminal-line-user {
-            color: #7fff7f;
+            color: #8dff9d;
           }
           .terminal-prompt {
             font-weight: bold;
@@ -343,14 +344,17 @@ Yes, a shirt that talks. Weird, right?`,
           }
           .terminal-input-row {
             align-items: center;
+            background: rgba(0, 0, 0, 0.88);
+            border: 1px solid rgba(22, 255, 22, 0.3);
+            backdrop-filter: blur(10px);
           }
           .terminal-input {
-            background: #0a0a0a;
-            color: #ff9900;
+            background: transparent;
+            color: #ffb347;
             border: none;
           }
           .glitch-scanlines {
-            background: repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(255,153,0,0.08) 7px);
+            background: repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(39, 255, 122, 0.08) 7px);
           }
           .animate-scanlines {
             animation: scanline-move 1.2s linear infinite;

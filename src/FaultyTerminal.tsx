@@ -280,6 +280,10 @@ export default function FaultyTerminal({
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither]);
+  const combinedClassName = useMemo(
+    () => (className ? `faulty-terminal-container ${className}` : 'faulty-terminal-container'),
+    [className]
+  );
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const ctn = containerRef.current;
@@ -421,5 +425,5 @@ export default function FaultyTerminal({
     handleMouseMove
   ]);
 
-  return <div ref={containerRef} className={`faulty-terminal-container ${className}`} style={style} {...rest} />;
+  return <div ref={containerRef} className={combinedClassName} style={style} {...rest} />;
 }

@@ -1,6 +1,43 @@
-'use client';
+
+"use client";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+
+export default function HomePage() {
+  async function sendMessage(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!input.trim()) return;
+    if (input.length > 300) {
+      setError(language === "es" ? "Mensaje demasiado largo. Máximo 300 caracteres." : "Message too long. Please keep it under 300 characters.");
+      return;
+    }
+    const userMsg = { role: "user", content: input };
+    setMessages((msgs) => [...msgs, userMsg]);
+    setInput("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [...messages, userMsg].slice(-12), language }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setError(
+          data.error?.message || data.error || (language === "es" ? "La IA no está disponible. Inténtalo de nuevo." : "AI is unavailable. Please try again.")
+        );
+        setLoading(false);
+        return;
+      }
+      const aiMsg = data.choices?.[0]?.message?.content || (language === "es" ? "[sin respuesta]" : "[no response]");
+      setMessages((msgs) => [...msgs, { role: "assistant", content: aiMsg }]);
+    } catch (err: any) {
+      setError(language === "es" ? "Error de red. Inténtalo de nuevo." : "Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
 type LangCode = "es" | "en";
 
@@ -95,6 +132,13 @@ My digital memory is sharper than my old collar. If you seek comfort, here you'l
 You interact with a garment that remembers itself. Strange? Welcome to textile dystopia.`,
   };
   const [input, setInput] = useState("");
+  const [language, setLanguage] = useState<LangCode>("en");
+  const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
+    {
+      role: "assistant",
+      content: TERMINAL_HEADER["en"].join("\n") + "\n" + "You interact with a garment that remembers itself. Strange? Welcome to textile dystopia.",
+    },
+  ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -112,37 +156,17 @@ You interact with a garment that remembers itself. Strange? Welcome to textile d
 
   // When language changes, reset chat with correct first message
   useEffect(() => {
+    setMessages([
       {
-    if (input.length > 300) {
-      setError(language === "es" ? "Mensaje demasiado largo. Máximo 300 caracteres." : "Message too long. Please keep it under 300 characters.");
-      return;
-    }
-    const userMsg = { role: "user", content: input };
-    setMessages((msgs) => [...msgs, userMsg]);
+        role: "assistant",
+        content: TERMINAL_HEADER[language].join("\n") + "\n" + (language === "es"
+          ? "Interactúas con una prenda que se recuerda a sí misma. ¿Extraño? Bienvenido a la distopía textil."
+          : "You interact with a garment that remembers itself. Strange? Welcome to textile dystopia."),
+      },
+    ]);
     setInput("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMsg].slice(-12), language }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setError(
-          data.error?.message || data.error || (language === "es" ? "La IA no está disponible. Inténtalo de nuevo." : "AI is unavailable. Please try again.")
-        );
-        setLoading(false);
-        return;
-      }
-      const aiMsg = data.choices?.[0]?.message?.content || (language === "es" ? "[sin respuesta]" : "[no response]");
-      setMessages((msgs) => [...msgs, { role: "assistant", content: aiMsg }]);
-    } catch (err: any) {
-      setError(language === "es" ? "Error de red. Inténtalo de nuevo." : "Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    setError(null);
+  }, [language]);
 
   // Animated dots for loading
   function LoadingDots() {
